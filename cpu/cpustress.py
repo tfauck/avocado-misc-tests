@@ -155,17 +155,19 @@ class cpustresstest(Test):
         """
         for _ in range(self.iteration):
             self.log.info("OFF-ON Serial Test %s", totalcpus)
-            for cpus in range(1, totalcpus):
-                self.log.info("cpu%s going offline" % cpus)
-                cpu.offline(cpus)
+            if (totalcpus != 0):
+                for cpus in range(1, totalcpus):
+                    self.log.info("cpu%s going offline" % cpus)
+                    cpu.offline(cpus)
             self.log.info("Online CPU's in reverse order %s", totalcpus)
             for cpus in range(totalcpus, -1, -1):
                 self.log.info("cpu%s going online" % cpus)
                 cpu.online(cpus)
             self.log.info("Offline CPU's in reverse order %s", totalcpus)
-            for cpus in range(totalcpus, -1, -2):
-                self.log.info("cpu%s going offline" % cpus)
-                cpu.offline(cpus)
+            if (totalcpus != 0):
+                for cpus in range(totalcpus, -1, -2):
+                    self.log.info("cpu%s going offline" % cpus)
+                    cpu.offline(cpus)
             self.log.info("Online CPU's in serial")
             for cpus in range(0, totalcpus):
                 self.log.info("cpu%s going online" % cpus)
@@ -179,8 +181,9 @@ class cpustresstest(Test):
         """
         for cpus in range(1, totalcpus):
             for _ in range(self.iteration):
-                self.log.info("cpu%s going offline" % cpus)
-                cpu.offline(cpus)
+                if (totalcpus != 0):
+                    self.log.info("cpu%s going offline" % cpus)
+                    cpu.offline(cpus)
                 self.log.info("cpu%s going online" % cpus)
                 cpu.online(cpus)
 
@@ -191,8 +194,9 @@ class cpustresstest(Test):
         """
         for _ in range(self.iteration):
             for cpus in range(totalcpus):
-                self.log.info("cpu%s going offline" % cpus)
-                cpu.offline(cpus)
+                if (totalcpus != 0):
+                    self.log.info("cpu%s going offline" % cpus)
+                    cpu.offline(cpus)
                 self.log.info("cpu%s going online" % cpus)
                 cpu.online(cpus)
 
@@ -244,7 +248,7 @@ class cpustresstest(Test):
         self.log.info("\nSet all process affine to single NUMA node")
         nodes = process.system_output(
             "numactl --hardware | grep cpus:",  shell=True)
-        nodes = nodes.split('\n')
+        nodes = nodes.decode().split('\n')
         for node in nodes:
             cores = node.split(': ')[-1].replace(" ", ",")
             if cores:
